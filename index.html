@@ -13,6 +13,7 @@
             --text-muted: #94a3b8;
             --success: #22c55e;
             --warning: #f59e0b;
+            --purple: #a855f7;
         }
 
         body {
@@ -111,7 +112,7 @@
             transition: width 0.3s ease;
         }
 
-        textarea, input[type="text"], input[type="number"] {
+        textarea, input[type="text"], input[type="number"], select {
             width: 100%;
             background: #0f172a;
             border: 1px solid #334155;
@@ -159,6 +160,21 @@
             color: var(--success);
             margin: 10px 0;
         }
+
+        /* Ek Çalışma Kartları */
+        .work-type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .type-soru { background: #0284c7; color: #fff; }
+        .type-konu { background: #9333ea; color: #fff; }
+        .type-deneme { background: #d97706; color: #fff; }
+        .type-tekrar { background: #16a34a; color: #fff; }
     </style>
 </head>
 <body>
@@ -193,8 +209,30 @@
             <h2>Haftalık Genel Soru Hedefi</h2>
             <div class="counter-display" id="questionCount">0 / 1500 Soru</div>
             <div class="progress-bar"><div class="progress-fill" id="questionProgress"></div></div>
-            <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-top:10px;">Aşağıdaki kaynaklara girdiğin sorular otomatik buraya toplanır.</p>
+            <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-top:10px;">Girdiğin sorular ve ek çalışmalar otomatik buraya eklenir.</p>
             <button onclick="resetAllInputs()" style="background:#334155; color:#fff; margin-top:5px;">Haftalık Soru Sayılarını Sıfırla</button>
+        </div>
+    </div>
+
+    <!-- ÖZEL & EK ÇALIŞMALAR PANELİ -->
+    <div class="card" style="margin-bottom:25px;">
+        <h2>Ek Çalışmalar Ekleme Paneli</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+            <input type="text" id="workTitle" placeholder="Çalışma Başlığı / Ders (Örn: Apotemi Problemler)">
+            <select id="workType" onchange="toggleQuestionInput()">
+                <option value="Soru Çözümü">Soru Çözümü</option>
+                <option value="Konu Anlatımı">Konu Anlatımı</option>
+                <option value="Deneme Analizi">Deneme Analizi</option>
+                <option value="Tekrar / Özet">Tekrar / Özet</option>
+            </select>
+            <input type="number" id="workCount" placeholder="Soru Sayısı (Opsiyonel)">
+        </div>
+        <textarea id="workDesc" style="height:60px;" placeholder="Açıklama / Notlar (Örn: Sayfa 40-50 arası çözüldü, yanlış sorular analiz edildi...)"></textarea>
+        <button onclick="addCustomWork()">Çalışmayı Sisteme Kaydet</button>
+
+        <div style="margin-top:20px;">
+            <h3 style="font-size:15px; color:var(--accent);">Kaydedilen Ek Çalışmalar</h3>
+            <ul id="workList"></ul>
         </div>
     </div>
 
@@ -339,10 +377,13 @@
         document.getElementById('progress').style.width = percent + '%';
     }
 
+    // Ek Çalışmalardan Gelen Soru Sayıları
+    let customQuestionsTotal = 0;
+
     // Otomatik Soru Hesaplayıcı
     function calculateTotalQuestions() {
         const inputs = document.querySelectorAll('.count-input');
-        let total = 0;
+        let total = customQuestionsTotal;
         inputs.forEach(input => {
             const val = parseInt(input.value);
             if(!isNaN(val) && val > 0) {
@@ -358,7 +399,47 @@
     function resetAllInputs() {
         const inputs = document.querySelectorAll('.count-input');
         inputs.forEach(input => input.value = '');
+        customQuestionsTotal = 0;
+        document.getElementById('workList').innerHTML = '';
         calculateTotalQuestions();
+    }
+
+    // Ek Çalışma Ekleme Fonksiyonu
+    function addCustomWork() {
+        const title = document.getElementById('workTitle').value;
+        const type = document.getElementById('workType').value;
+        const count = parseInt(document.getElementById('workCount').value);
+        const desc = document.getElementById('workDesc').value;
+
+        if(!title) return;
+
+        let badgeClass = 'type-soru';
+        if(type === 'Konu Anlatımı') badgeClass = 'type-konu';
+        if(type === 'Deneme Analizi') badgeClass = 'type-deneme';
+        if(type === 'Tekrar / Özet') badgeClass = 'type-tekrar';
+
+        let countText = '';
+        if(!isNaN(count) && count > 0) {
+            countText = ` - <strong>${count} Soru</strong>`;
+            customQuestionsTotal += count;
+            calculateTotalQuestions();
+        }
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <div>
+                <span class="work-type-badge ${badgeClass}">${type}</span>
+                <strong>${title}</strong>${countText}
+            </div>
+            ${desc ? `<div style="font-size:12px; color:var(--text-muted); margin-top:4px;">${desc}</div>` : ''}
+        `;
+
+        document.getElementById('workList').prepend(li);
+
+        // Formu temizle
+        document.getElementById('workTitle').value = '';
+        document.getElementById('workCount').value = '';
+        document.getElementById('workDesc').value = '';
     }
 
     // Pomodoro Kronometre
