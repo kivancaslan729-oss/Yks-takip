@@ -24,7 +24,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
@@ -35,14 +35,24 @@
             border-bottom: 2px solid var(--card-bg);
             padding-bottom: 20px;
             margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         h1 { margin: 0; color: var(--accent); font-size: 24px; }
-        .target-badge { background: #0369a1; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+        
+        .header-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .target-badge { background: #0369a1; padding: 8px 14px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+        .countdown-badge { background: #1e293b; border: 1px solid var(--accent); padding: 8px 14px; border-radius: 20px; font-weight: bold; font-size: 14px; color: var(--accent); }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 20px;
             margin-bottom: 25px;
         }
@@ -59,12 +69,32 @@
         .todo-item {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 12px;
-            cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
+            gap: 10px;
         }
 
-        .todo-item input { margin-right: 12px; transform: scale(1.3); }
+        .todo-item-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .todo-item input[type="checkbox"] { transform: scale(1.2); }
+
+        .q-input {
+            width: 75px !important;
+            padding: 4px 8px !important;
+            margin-bottom: 0 !important;
+            text-align: center;
+            font-size: 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: var(--accent);
+            border-radius: 4px;
+        }
 
         .progress-bar {
             background: #334155;
@@ -81,7 +111,7 @@
             transition: width 0.3s ease;
         }
 
-        textarea, input[type="text"] {
+        textarea, input[type="text"], input[type="number"] {
             width: 100%;
             background: #0f172a;
             border: 1px solid #334155;
@@ -105,8 +135,30 @@
 
         button:hover { opacity: 0.9; }
 
-        ul { list-style-type: none; padding: 0; }
+        ul { list-style-type: none; padding: 0; margin: 0; }
         li { background: #0f172a; padding: 10px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid var(--accent); font-size: 14px; }
+
+        .timer-display {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            color: var(--accent);
+            font-family: monospace;
+        }
+        .timer-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .timer-btn-group button { flex: 1; }
+
+        .counter-display {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--success);
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -115,50 +167,144 @@
     <header>
         <div>
             <h1>Hedef: YKS İlk 1000</h1>
-            <small style="color: var(--text-muted)">TYT + AYT Detaylı Derece Takip Paneli</small>
+            <small style="color: var(--text-muted)">TYT + AYT Komuta & Derece Takip Merkezi</small>
         </div>
-        <div class="target-badge">Hedef: Top 1000</div>
+        <div class="header-stats">
+            <div class="countdown-badge" id="countdown">YKS 2027: Yükleniyor...</div>
+            <div class="target-badge">Hedef: Top 1000</div>
+        </div>
     </header>
 
+    <!-- Sayaçlar & Odaklanma Araçları -->
+    <div class="grid">
+        <!-- Odaklanma Kronometresi / Pomodoro -->
+        <div class="card">
+            <h2>Masa Başı Odaklanma Sayacı</h2>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div class="timer-btn-group">
+                <button onclick="startTimer()">Başlat</button>
+                <button onclick="pauseTimer()" style="background:var(--warning);">Durdur</button>
+                <button onclick="resetTimer()" style="background:#ef4444; color:#fff;">Sıfırla</button>
+            </div>
+        </div>
+
+        <!-- Haftalık Toplam Çözülen Soru Sayacı -->
+        <div class="card">
+            <h2>Haftalık Genel Soru Hedefi</h2>
+            <div class="counter-display" id="questionCount">0 / 1500 Soru</div>
+            <div class="progress-bar"><div class="progress-fill" id="questionProgress"></div></div>
+            <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-top:10px;">Aşağıdaki kaynaklara girdiğin sorular otomatik buraya toplanır.</p>
+            <button onclick="resetAllInputs()" style="background:#334155; color:#fff; margin-top:5px;">Haftalık Soru Sayılarını Sıfırla</button>
+        </div>
+    </div>
+
+    <!-- Görev & Soru Sayısı Listeleri -->
     <div class="grid">
         <!-- TYT Rutinler & Geometri -->
         <div class="card">
             <h2>TYT Rutinler & Geometri</h2>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 30 Paragraf / Türkçe Branş Denemesi</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 30 Orijinal Problem</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Bilgi Sarmal Geometri Soru Bankası</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Orijinal Geometri Soru Bankası</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış TYT Mat Soru Bankası</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 345 TYT Fen (Isı-Sıcaklık / Eksik Konu)</div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Paragraf / Türkçe Deneme</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Orijinal Problemler</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Bilgi Sarmal Geometri</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Orijinal Geometri</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Barış TYT Matematik</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> 345 TYT Fen</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
         </div>
 
         <!-- Barış Fasikülleri Takip -->
         <div class="card">
             <h2>Barış Çelenk Fasikülleri</h2>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış Fonksiyonlar Fasikülü (Sayfa 136+)</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış Polinom-İkinci Dereceden Denklemler</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış Trigonometri Fasikülü</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış Limit-Türev-İntegral (LTI) Fasikülleri</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış PKOB (Olasılık) Fasikülü</div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Barış Fonksiyonlar</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Barış Polinom-2.Derece</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Barış Trigonometri</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Barış LTI Fasikülleri</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Barış PKOB Fasikülü</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
         </div>
-    </div>
 
-    <div class="grid">
         <!-- AYT Mat & Fen Soru Bankaları -->
         <div class="card">
             <h2>AYT Mat Soru Bankaları & Fen</h2>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 3D AYT Matematik (Eyüp B.)</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 345 AYT Matematik Soru Bankası</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış AYT Matematik Soru Bankası</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Orijinal AYT Matematik Soru Bankası</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Ertan Sinan Şahin / Orijinal Fizik</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Orbital / 3D Kimya</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 345 Biyo Analiz</div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> 3D AYT Mat (Eyüp B.)</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> 345 AYT Matematik</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Barış AYT Matematik</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Orijinal AYT Matematik</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> ESŞ / Orijinal Fizik</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> Orbital / 3D Kimya</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
+            <div class="todo-item">
+                <div class="todo-item-label"><input type="checkbox" onchange="updateProgress()"> 345 Biyo Analiz</div>
+                <input type="number" class="q-input count-input" placeholder="Soru" onchange="calculateTotalQuestions()">
+            </div>
             
             <div style="margin-top:20px;">
                 <small>Günlük Görev Tamamlanma Oranı</small>
                 <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Deneme Net Takibi & Analiz Defteri -->
+    <div class="grid">
+        <!-- Deneme Net Kaydı -->
+        <div class="card">
+            <h2>Deneme Net Takip Paneli</h2>
+            <input type="text" id="examName" placeholder="Deneme Adı (Örn: 3D TYT Genel-1)">
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="tytNet" placeholder="TYT Net">
+                <input type="number" id="aytNet" placeholder="AYT Net">
+            </div>
+            <button onclick="addExam()">Denemeyi Kaydet</button>
+            <ul id="examList" style="margin-top:15px;"></ul>
         </div>
 
         <!-- Dikkatsizlik Defteri -->
@@ -168,17 +314,23 @@
             <input type="text" id="noteTitle" placeholder="Ders & Konu (Örn: AYT Mat - Grafik Yorumu)">
             <textarea id="noteInput" style="height:60px;" placeholder="Hatan neydi? (Örn: İşlem hatası, kök kaçırma...)"></textarea>
             <button onclick="addNote()">Deftere Ekle</button>
+            <ul id="noteList" style="margin-top:15px;"></ul>
         </div>
-    </div>
-
-    <!-- Kayıtlı Analizler -->
-    <div class="card">
-        <h2>Soru Defteri & Analiz Kayıtları</h2>
-        <ul id="noteList"></ul>
     </div>
 </div>
 
 <script>
+    // Geri Sayım Sayacı (Tahmini YKS 2027 Tarihi)
+    const yksDate = new Date("June 19, 2027 10:15:00").getTime();
+    setInterval(function() {
+        const now = new Date().getTime();
+        const distance = yksDate - now;
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        document.getElementById("countdown").innerHTML = `YKS 2027: ${days} Gün ${hours} Saat`;
+    }, 1000);
+
+    // Görev İlerleme Çubuğu
     function updateProgress() {
         const checkboxes = document.querySelectorAll('.todo-item input[type="checkbox"]');
         let checked = 0;
@@ -187,11 +339,70 @@
         document.getElementById('progress').style.width = percent + '%';
     }
 
+    // Otomatik Soru Hesaplayıcı
+    function calculateTotalQuestions() {
+        const inputs = document.querySelectorAll('.count-input');
+        let total = 0;
+        inputs.forEach(input => {
+            const val = parseInt(input.value);
+            if(!isNaN(val) && val > 0) {
+                total += val;
+            }
+        });
+        
+        document.getElementById('questionCount').innerText = `${total} / 1500 Soru`;
+        const percentage = Math.min((total / 1500) * 100, 100);
+        document.getElementById('questionProgress').style.width = percentage + '%';
+    }
+
+    function resetAllInputs() {
+        const inputs = document.querySelectorAll('.count-input');
+        inputs.forEach(input => input.value = '');
+        calculateTotalQuestions();
+    }
+
+    // Pomodoro Kronometre
+    let timer;
+    let timeLeft = 1500; // 25 Dakika
+    function updateTimerDisplay() {
+        const min = Math.floor(timeLeft / 60);
+        const sec = timeLeft % 60;
+        document.getElementById('timerDisplay').innerText = `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+    function startTimer() {
+        if(timer) return;
+        timer = setInterval(() => {
+            if(timeLeft > 0) {
+                timeLeft--;
+                updateTimerDisplay();
+            } else {
+                clearInterval(timer);
+                alert("Pomodoro bitti! Mola zamanı.");
+            }
+        }, 1000);
+    }
+    function pauseTimer() { clearInterval(timer); timer = null; }
+    function resetTimer() { pauseTimer(); timeLeft = 1500; updateTimerDisplay(); }
+
+    // Deneme Kaydı
+    function addExam() {
+        const name = document.getElementById('examName').value;
+        const tyt = document.getElementById('tytNet').value;
+        const ayt = document.getElementById('aytNet').value;
+        if(!name) return;
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${name}:</strong> TYT: ${tyt || '-'} | AYT: ${ayt || '-'}`;
+        document.getElementById('examList').appendChild(li);
+        document.getElementById('examName').value = '';
+        document.getElementById('tytNet').value = '';
+        document.getElementById('aytNet').value = '';
+    }
+
+    // Soru Defteri Not Ekleme
     function addNote() {
         const title = document.getElementById('noteTitle');
         const input = document.getElementById('noteInput');
         if(!input.value.trim()) return;
-        
         const li = document.createElement('li');
         li.innerHTML = `<strong>${title.value || 'Genel'}:</strong> ${input.value}`;
         document.getElementById('noteList').appendChild(li);
