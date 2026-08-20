@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YKS İlk 1000 Hazırlık Paneli</title>
+    <title>YKS İlk 1000 Hazırlık & Koçluk Paneli</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -12,6 +12,7 @@
             --text: #f8fafc;
             --text-muted: #94a3b8;
             --success: #22c55e;
+            --warning: #f59e0b;
         }
 
         body {
@@ -23,7 +24,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -41,7 +42,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 25px;
         }
@@ -53,16 +54,17 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .card h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .card h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid #334155; padding-bottom: 10px; color: var(--accent); }
 
         .todo-item {
             display: flex;
             align-items: center;
             margin-bottom: 12px;
             cursor: pointer;
+            font-size: 14px;
         }
 
-        .todo-item input { margin-right: 12px; transform: scale(1.2); }
+        .todo-item input { margin-right: 12px; transform: scale(1.3); }
 
         .progress-bar {
             background: #334155;
@@ -79,16 +81,15 @@
             transition: width 0.3s ease;
         }
 
-        textarea {
+        textarea, input[type="text"] {
             width: 100%;
-            height: 80px;
             background: #0f172a;
             border: 1px solid #334155;
             color: var(--text);
             border-radius: 6px;
             padding: 10px;
             box-sizing: border-box;
-            resize: vertical;
+            margin-bottom: 10px;
         }
 
         button {
@@ -100,13 +101,12 @@
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
         }
 
         button:hover { opacity: 0.9; }
 
         ul { list-style-type: none; padding: 0; }
-        li { background: #0f172a; padding: 10px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid var(--accent); }
+        li { background: #0f172a; padding: 10px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid var(--accent); font-size: 14px; }
     </style>
 </head>
 <body>
@@ -115,37 +115,65 @@
     <header>
         <div>
             <h1>Hedef: YKS İlk 1000</h1>
-            <small style="color: var(--text-muted)">47k'den Zirveye İlerleme Paneli</small>
+            <small style="color: var(--text-muted)">TYT + AYT Detaylı Derece Takip Paneli</small>
         </div>
-        <div class="target-badge">Sistem Aktif</div>
+        <div class="target-badge">Hedef: Top 1000</div>
     </header>
 
     <div class="grid">
-        <!-- Günlük Rutinler -->
+        <!-- TYT Rutinler & Geometri -->
         <div class="card">
-            <h2>Günlük Sabit Rutinler</h2>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 30 Paragraf Sorusu</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 30 Problem Sorusu</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 30 Geometri Sorusu</div>
-            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 1 Adet TYT Branş Denemesi</div>
+            <h2>TYT Rutinler & Geometri</h2>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 30 Paragraf / Türkçe Branş Denemesi</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 30 Orijinal Problem</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Bilgi Sarmal Geometri Soru Bankası</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Orijinal Geometri Soru Bankası</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış TYT Mat Soru Bankası</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 345 TYT Fen (Isı-Sıcaklık / Eksik Konu)</div>
+        </div>
+
+        <!-- Barış Fasikülleri Takip -->
+        <div class="card">
+            <h2>Barış Çelenk Fasikülleri</h2>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış Fonksiyonlar Fasikülü (Sayfa 136+)</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış Polinom-İkinci Dereceden Denklemler</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış Trigonometri Fasikülü</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış Limit-Türev-İntegral (LTI) Fasikülleri</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış PKOB (Olasılık) Fasikülü</div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- AYT Mat & Fen Soru Bankaları -->
+        <div class="card">
+            <h2>AYT Mat Soru Bankaları & Fen</h2>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 3D AYT Matematik (Eyüp B.)</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 345 AYT Matematik Soru Bankası</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Barış AYT Matematik Soru Bankası</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Orijinal AYT Matematik Soru Bankası</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Ertan Sinan Şahin / Orijinal Fizik</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> Orbital / 3D Kimya</div>
+            <div class="todo-item"><input type="checkbox" onchange="updateProgress()"> 345 Biyo Analiz</div>
             
             <div style="margin-top:20px;">
-                <small>Bugünkü İlerleme</small>
+                <small>Günlük Görev Tamamlanma Oranı</small>
                 <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
             </div>
         </div>
 
-        <!-- Yapılamayan Sorular Defteri -->
+        <!-- Dikkatsizlik Defteri -->
         <div class="card">
-            <h2>Haftalık Soru Defteri</h2>
-            <textarea id="noteInput" placeholder="Yapamadığın zor soru kalıplarını ve kaynak adını buraya yaz..."></textarea>
-            <button onclick="addNote()">Soru Ekle</button>
+            <h2>Sınav Stresi & Dikkatsizlik Defteri</h2>
+            <p style="font-size:12px; color:var(--text-muted);">İşlem hatası veya sınav heyecanından kaçan soruları ekle.</p>
+            <input type="text" id="noteTitle" placeholder="Ders & Konu (Örn: AYT Mat - Grafik Yorumu)">
+            <textarea id="noteInput" style="height:60px;" placeholder="Hatan neydi? (Örn: İşlem hatası, kök kaçırma...)"></textarea>
+            <button onclick="addNote()">Deftere Ekle</button>
         </div>
     </div>
 
-    <!-- Kaydedilen Notlar -->
+    <!-- Kayıtlı Analizler -->
     <div class="card">
-        <h2>Tekrar Edilecek Zor Sorular & Notlar</h2>
+        <h2>Soru Defteri & Analiz Kayıtları</h2>
         <ul id="noteList"></ul>
     </div>
 </div>
@@ -160,12 +188,14 @@
     }
 
     function addNote() {
+        const title = document.getElementById('noteTitle');
         const input = document.getElementById('noteInput');
         if(!input.value.trim()) return;
         
         const li = document.createElement('li');
-        li.textContent = input.value;
+        li.innerHTML = `<strong>${title.value || 'Genel'}:</strong> ${input.value}`;
         document.getElementById('noteList').appendChild(li);
+        title.value = '';
         input.value = '';
     }
 </script>
